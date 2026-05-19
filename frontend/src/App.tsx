@@ -111,8 +111,6 @@ function App() {
             </RootLayout>
           }
         />
-        <Route path="/dashboard" element={<ProtectedRoute element={<DashboardLayout />} allowedRoles={[USER_ROLE.USER, USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.WRITER]} />}>
-          <Route index element={<ProtectedRoute element={<DashboardComponent />} allowedRoles={[USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN]} />} />
         <Route
           path="/dashboard"
           element={
