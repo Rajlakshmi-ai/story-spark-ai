@@ -208,6 +208,7 @@ export default function AIWritingAssistant() {
 
         <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", justifyContent: "center" }}>
           <button
+            onClick={() => window.location.href = "/stories"}
             style={{
               background: "linear-gradient(135deg, #7C5DFA 0%, #4F8EF7 100%)",
               border: "none",
@@ -223,6 +224,8 @@ export default function AIWritingAssistant() {
             Start Writing →
           </button>
           <button
+            onClick={() => window.location.href = "/story-inspiration"}
+
             style={{
               background: "transparent",
               border: "1px solid rgba(255,255,255,0.14)",
@@ -238,7 +241,6 @@ export default function AIWritingAssistant() {
           </button>
         </div>
       </section>
-
       <section style={{ padding: "5rem 2.5rem", maxWidth: 1100, margin: "0 auto" }}>
         <p style={{ fontSize: "0.72rem", letterSpacing: "0.12em", color: "#5A577A", textTransform: "uppercase", textAlign: "center", marginBottom: "0.8rem" }}>What the assistant does</p>
         <h2 style={{ fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)", fontWeight: 600, textAlign: "center", marginBottom: "3.5rem", color: "#E8E6F0" }}>
