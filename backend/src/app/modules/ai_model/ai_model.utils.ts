@@ -42,7 +42,8 @@ interface Story {
 export async function generateWithGeminiStories(
   prompt: string,
   wordLength: number = 250,
-  numStories: number = 2
+  numStories: number = 2,
+  signal?: AbortSignal
 ): Promise<Story[]> {
   try {
     const chatSession = model.startChat({
@@ -54,10 +55,17 @@ export async function generateWithGeminiStories(
       `Generate ${numStories} different short stories based on the following prompt: "${prompt}".
         Each story should be in JSON format with fields: "title", "content", and "tag".
         Ensure each story is approximately ${wordLength} words long.
-        Return the output as a JSON array.`
+        Return the output as a JSON array.`,
+      { signal }
     );
     const text = response.response.text();
     const stories: Story[] = JSON.parse(text);
+
+    // Skip image fetching if the request was already aborted
+    if (signal?.aborted) {
+      return stories;
+    }
+
     const imagePromises = stories.map((story) => fetchImageURL(story.tag));
     const imageResults = await Promise.all(imagePromises);
     return stories.map((story, index) => ({
@@ -66,6 +74,10 @@ export async function generateWithGeminiStories(
       uuid: uuidv4(),
     }));
   } catch (error) {
+    // Re-throw abort errors so the caller can distinguish timeouts from failures
+    if (error instanceof Error && error.name === "AbortError") {
+      throw error;
+    }
     return [];
   }
 }

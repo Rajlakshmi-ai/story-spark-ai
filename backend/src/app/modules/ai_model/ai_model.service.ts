@@ -1,21 +1,26 @@
 import ApiError from "../../../errors/api_error";
 import { ITokenPayload } from "../../../interfaces/token";
-import { timeoutLimit } from "../../../utils/timeout_limit";
 import { User } from "../user/user.model";
 import { IAIModel } from "./ai_model.interface";
 import { generateWithGeminiStories } from "./ai_model.utils";
 import httpStatus from "http-status";
 
-const aiModelGenerate = async (payload: IAIModel, token: ITokenPayload) => {
-  try {
-    const { email } = token;
-    const { prompt, wordLength, numStories } = payload;
-    const result = await Promise.race([
-      timeoutLimit(60000),
-      generateWithGeminiStories(prompt, wordLength, numStories),
-    ]);
+const AI_TIMEOUT_MS = 60000;
+const AI_FREE_TIMEOUT_MS = 10000;
 
-    if (result) {
+const aiModelGenerate = async (payload: IAIModel, token: ITokenPayload) => {
+  const { email } = token;
+  const { prompt, wordLength, numStories } = payload;
+
+  try {
+    const result = await generateWithGeminiStories(
+      prompt,
+      wordLength,
+      numStories,
+      AbortSignal.timeout(AI_TIMEOUT_MS)
+    );
+
+    if (result && result.length > 0) {
       const user = await User.findOne({ email: email });
 
       if (!user) {
@@ -39,20 +44,38 @@ const aiModelGenerate = async (payload: IAIModel, token: ITokenPayload) => {
     }
     return result;
   } catch (error) {
-    throw new ApiError(httpStatus.GATEWAY_TIMEOUT, "Request timed out!");
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    if (error instanceof Error && error.name === "TimeoutError") {
+      throw new ApiError(httpStatus.GATEWAY_TIMEOUT, "Request timed out!");
+    }
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Story generation failed!"
+    );
   }
 };
 
 const aiFreeModelGenerate = async (payload: IAIModel) => {
+  const { prompt } = payload;
+
   try {
-    const { prompt } = payload;
-    const result = await Promise.race([
-      timeoutLimit(10000),
-      generateWithGeminiStories(prompt, 150),
-    ]);
+    const result = await generateWithGeminiStories(
+      prompt,
+      150,
+      2,
+      AbortSignal.timeout(AI_FREE_TIMEOUT_MS)
+    );
     return result;
   } catch (error) {
-    throw new ApiError(httpStatus.GATEWAY_TIMEOUT, "Request timed out!");
+    if (error instanceof Error && error.name === "TimeoutError") {
+      throw new ApiError(httpStatus.GATEWAY_TIMEOUT, "Request timed out!");
+    }
+    throw new ApiError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      "Story generation failed!"
+    );
   }
 };
 
