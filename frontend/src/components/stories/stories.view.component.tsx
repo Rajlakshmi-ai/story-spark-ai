@@ -75,7 +75,9 @@ const StoriesViewComponent: React.FC<StoriesComponentProps> = ({
         title: selectedStory.title,
         content: originalStoryContent[selectedStory.uuid] || selectedStory.content,
         tag: selectedStory.tag,
+
         language: selectedStory.language || "English",
+
       };
       
       const generationRequest = isLogin

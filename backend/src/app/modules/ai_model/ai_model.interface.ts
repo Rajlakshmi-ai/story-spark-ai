@@ -23,6 +23,8 @@ export interface IAlternateEndingPayload {
   title: string;
   content: string;
   tag: string;
+
   language?: string;
+
 }
 

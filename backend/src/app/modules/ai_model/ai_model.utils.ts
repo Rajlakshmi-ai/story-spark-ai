@@ -79,8 +79,12 @@ export async function generateWithGeminiStories(
 export async function generateAlternateEndingsWithGemini(
   title: string,
   content: string,
+
   tag: string,
   language: string = "English"
+
+ 
+
 ): Promise<IAlternateEnding[]> {
   try {
     const chatSession = model.startChat({
@@ -89,7 +93,10 @@ export async function generateAlternateEndingsWithGemini(
       history: [],
     });
     const response = await chatSession.sendMessage(
+
       `You are a professional narrative editor. Analyze the following story (Title: "${title}", Genre/Tag: "${tag}", Language: "${language}"):
+
+      
       
       Story Content:
       "${content}"
@@ -102,7 +109,6 @@ export async function generateAlternateEndingsWithGemini(
       5. "Cliffhanger Ending"
       
       The generated alternate endings and the rewritten stories MUST be written entirely in the ${language} language.
-      
       For each alternate ending, provide:
       - "style": The style name exactly as listed above.
       - "ending": A short paragraph or two describing the alternate ending scene itself.
