@@ -10,7 +10,7 @@ import { FaLinkedin, FaEnvelope } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 
 const FeatureComponent = () => {
-  const { data, isLoading } = useGetFeaturedListsQuery(undefined);
+  const { data, isLoading, isError } = useGetFeaturedListsQuery(undefined);
   const navigate = useNavigate();
 
   // Dynamic reading calculation logic
@@ -24,6 +24,17 @@ const FeatureComponent = () => {
 
   if (isLoading) {
     return <LoadingAnimation />;
+  }
+
+  if (isError) {
+    return (
+      <div className="mb-12 text-slate-900 dark:text-slate-100">
+        <h2 className="text-2xl font-bold mb-6">Featured Posts</h2>
+        <div className="rounded-lg border border-red-200 dark:border-red-900/70 bg-red-50 dark:bg-red-900/20 px-4 py-5 text-red-700 dark:text-red-400">
+          Failed to load featured posts. Please try again later.
+        </div>
+      </div>
+    );
   }
 
   return (

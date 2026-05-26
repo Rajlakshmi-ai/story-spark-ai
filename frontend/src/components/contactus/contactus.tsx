@@ -212,6 +212,7 @@ export default function Contact() {
           </div>
         </div>
 
+
         {/* Form Section */}
         <div className="group relative">
           {/* Glow Border */}
@@ -228,6 +229,11 @@ export default function Contact() {
             blur-sm
           "
           />
+
+        {/* Form Container */}
+          <div className="w-full max-w-xl mx-auto group relative">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded-[1.5rem] blur opacity-10 group-hover:opacity-15 transition duration-1000"></div>
+
 
           <form
             onSubmit={submitHandler}

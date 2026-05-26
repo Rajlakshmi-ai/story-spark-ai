@@ -125,7 +125,7 @@ function App() {
           element={
             <ProtectedRoute
               element={<DashboardLayout />}
-              allowedRoles={[USER_ROLE.ADMIN]}
+              allowedRoles={[USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.WRITER, USER_ROLE.USER]}
             />
           }
         >
@@ -134,7 +134,7 @@ function App() {
             element={
               <ProtectedRoute
                 element={<DashboardComponent />}
-                allowedRoles={[USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN]}
+                allowedRoles={[USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.WRITER, USER_ROLE.USER]}
               />
             }
           />
@@ -336,19 +336,9 @@ function App() {
         <Route
           path="/contact-us"
           element={
-            <ProtectedRoute
-              element={
-                <RootLayout>
-                  <Contact />
-                </RootLayout>
-              }
-              allowedRoles={[
-                USER_ROLE.USER,
-                USER_ROLE.WRITER,
-                USER_ROLE.ADMIN,
-                USER_ROLE.SUPER_ADMIN,
-              ]}
-            />
+            <RootLayout>
+            <Contact />
+            </RootLayout>
           }
         />
         <Route
