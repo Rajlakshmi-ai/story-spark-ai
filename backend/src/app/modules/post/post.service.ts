@@ -23,12 +23,15 @@ const createPost = async (payload: IPostPayload, token: ITokenPayload) => {
     throw new ApiError(httpStatus.BAD_REQUEST, "User not found!");
   }
   try {
+    const isPublished = payload.isPublished ?? true;
     const res = await Post.create({
       ...payload,
+      isPublished,
+      publishedAt: isPublished ? new Date() : null,
       author: user._id,
       updatedBy: user._id,
     });
-    if (res) {
+    if (res && res.isPublished) {
       user.postsCount += 1;
       await user.save();
     }
@@ -133,7 +136,7 @@ const getLatestPosts = async () => {
   try {
     const res = await Post.find({ isDeleted: { $ne: true } })
       .sort({ createdAt: -1 })
-      .limit(2)
+      .limit(50)
       .populate("author", "name email createdAt")
       .populate({
         path: "reactions",
@@ -156,7 +159,7 @@ const getFeaturedPosts = async () => {
       isDeleted: { $ne: true },
     })
       .sort({ createdAt: -1, updatedBy: -1 })
-      .limit(2)
+      .limit(10)
       .populate("author", "name email createdAt")
       .populate({
         path: "reactions",
@@ -318,7 +321,7 @@ const deletePost = async (postId: string, token: ITokenPayload) => {
   post.deletedBy = user._id;
   await post.save();
 
-  if (user.postsCount > 0) {
+  if (post.isPublished && user.postsCount > 0) {
     user.postsCount -= 1;
     await user.save();
   }

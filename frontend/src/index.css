@@ -114,7 +114,8 @@
   top: 0;
   border-radius: 9999px;
   pointer-events: none;
-  transform: translate3d(calc(var(--cursor-x, -120px) - 50%), calc(var(--cursor-y, -120px) - 50%), 0);
+  transform: translate3d(-120px, -120px, 0) translate(-50%, -50%);
+  will-change: transform;
 }
 
 .magic-cursor-dot {
@@ -663,6 +664,9 @@ body {
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  background-color: #ffffff;
+  color: #0f172a;
+  transition: background-color 300ms ease, color 300ms ease;
 }
 
 /* Firefox scrollbar support */
@@ -710,8 +714,8 @@ body {
 }
 
 html.dark body {
-  background-color: #111827;
-  color: white;
+  background-color: #0B1120;
+  color: #f8fafc;
 }
 
 
@@ -752,5 +756,23 @@ html.dark body {
 }
 .animate-slide-in {
   animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+html, body {
+  touch-action: pan-x pan-y;
+}
+
+/* ── View Transitions API for Theme Toggle ── */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
 }
 

@@ -34,22 +34,29 @@ const ScrollFAB = () => {
   const [isNearBottom, setIsNearBottom] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const onScroll = () => {
-      const scrolled = window.scrollY;
-      const docHeight = Math.max(
-        document.documentElement.scrollHeight,
-        document.body.scrollHeight
-      );
-      const windowHeight = window.innerHeight;
-      
-      const atBottom = windowHeight + scrolled >= docHeight - 10;
-      const nearBottom = windowHeight + scrolled >= docHeight - 95; // Trigger near the footer
-      
-      setShowTop(scrolled > 300);
-      setShowBottom(!atBottom);
-      setIsNearBottom(nearBottom);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY;
+          const docHeight = Math.max(
+            document.documentElement.scrollHeight,
+            document.body.scrollHeight
+          );
+          const windowHeight = window.innerHeight;
+          
+          const atBottom = windowHeight + scrolled >= docHeight - 10;
+          const nearBottom = windowHeight + scrolled >= docHeight - 95; // Trigger near the footer
+          
+          setShowTop(scrolled > 300);
+          setShowBottom(!atBottom);
+          setIsNearBottom(nearBottom);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -59,7 +66,7 @@ const ScrollFAB = () => {
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
 
   return (
-    <div className={`fixed right-6 flex flex-col gap-3 z-50 transition-all duration-300 ${isNearBottom ? "bottom-20" : "bottom-6"}`}>
+    <div className={`fixed right-6 flex flex-col gap-3 z-50 transition-all duration-300 ${isNearBottom ? "bottom-36 lg:bottom-20" : "bottom-24 lg:bottom-6"}`}>
       <AnimatePresence mode="popLayout">
         {showTop && (
           <motion.button

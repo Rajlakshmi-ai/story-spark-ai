@@ -25,6 +25,11 @@ export interface IUser {
   lastRequestDate: Date;
   posts: Types.ObjectId[];
   isApplyForWriter: boolean;
+  readingPreferences?: {
+    favoriteGenres: { name: string; count: number }[];
+    favoriteEmotions: { name: string; count: number }[];
+  };
+  readingHistory?: Types.ObjectId[];
 }
 
 export type UserModel = Model<IUser, object>;
