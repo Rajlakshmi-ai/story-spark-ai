@@ -5,6 +5,7 @@ import { routeParam } from "../../../shared/route_param";
 import sendResponse from "../../../shared/send_response";
 import { getToken } from "../../middleware/token";
 import catchAsync from "../../../shared/catch_async";
+import ApiError from "../../../errors/api_error";
 
 const getAllUsers = async (req: Request, res: Response) => {
   try {
@@ -88,6 +89,15 @@ const applyForWriter = catchAsync(async (req: Request, res: Response) => {
 
 const approveWriterApplication = catchAsync(
   async (req: Request, res: Response) => {
+    // Defense-in-depth: verify caller is admin/super_admin at the controller level
+    const token = await getToken(req);
+    if (token.role !== "admin" && token.role !== "super_admin") {
+      throw new ApiError(
+        httpStatus.FORBIDDEN,
+        "Only administrators can approve writer applications!"
+      );
+    }
+
     const { email } = req.body;
 
     const result = await UserService.approveWriterApplication(email);
